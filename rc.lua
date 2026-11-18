@@ -2,6 +2,7 @@
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
+require("awful.autofocus")
 
 local settings = require("config.user")
 
@@ -20,7 +21,7 @@ local menu = require("ui.menu").build(settings)
 require("ui.layouts").setup()
 require("ui.tags").setup()
 require("ui.wallpaper").setup()
-require("ui.wibar").setup({
+require("ui.panels").setup({
 	modkey = settings.modkey,
 	launcher = menu.launcher,
 })
