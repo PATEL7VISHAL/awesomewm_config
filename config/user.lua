@@ -1,11 +1,15 @@
 local gears = require("gears")
+local keys = require("config.keys.mod")
+local apps = require("config.apps")
 
 local M = {}
 
-M.terminal = "xterm"
-M.editor = os.getenv("EDITOR") or "nano"
-M.editor_cmd = M.terminal .. " -e " .. M.editor
-M.modkey = "Mod4"
+M.terminal = apps.default.terminal
+M.editor = apps.default.editor
+M.editor_cmd = M.editor
+M.apps = apps
+M.modkey = keys.modKey
+M.altkey = keys.altKey
 M.theme = gears.filesystem.get_themes_dir() .. "default/theme.lua"
 
 return M

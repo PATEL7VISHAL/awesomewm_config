@@ -24,6 +24,7 @@ function M.setup(opts)
                 c:raise()
             end, { description = "toggle fullscreen", group = "client" }),
             awful.key({ opts.modkey, "Shift" }, "c", function(c) c:kill() end, { description = "close", group = "client" }),
+            awful.key({ opts.modkey, "Shift" }, "q", function(c) c:kill() end, { description = "close (alternate)", group = "client" }),
             awful.key({ opts.modkey, "Control" }, "space", awful.client.floating.toggle, { description = "toggle floating", group = "client" }),
             awful.key({ opts.modkey, "Control" }, "Return", function(c) c:swap(awful.client.getmaster()) end, { description = "move to master", group = "client" }),
             awful.key({ opts.modkey }, "o", function(c) c:move_to_screen() end, { description = "move to screen", group = "client" }),
