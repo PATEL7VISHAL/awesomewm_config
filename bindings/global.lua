@@ -48,7 +48,7 @@ function M.setup(opts)
     })
 
     awful.keyboard.append_global_keybindings({
-        awful.key({ modkey }, "F1", hotkeys_popup.show_help, { description = "show help", group = "awesome" }),
+        awful.key({ modkey }, "F12", hotkeys_popup.show_help, { description = "show help", group = "awesome" }),
         awful.key({ modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
         awful.key({ modkey, "Shift" }, "d", toggle_notifications, { description = "toggle Do Not Disturb", group = "notifications" }),
         awful.key({ modkey, "Shift" }, ";", function()
