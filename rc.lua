@@ -27,7 +27,8 @@ require("ui.wibar").setup({
 
 require("bindings.global").setup({
 	modkey = settings.modkey,
-	terminal = settings.terminal,
+	altkey = settings.altkey,
+	apps = settings.apps,
 	menu = menu.main,
 })
 require("bindings.client").setup({

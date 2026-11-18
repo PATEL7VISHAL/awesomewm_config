@@ -1,22 +1,4 @@
-local filesystem = require("gears.filesystem")
-local xresources = require("beautiful.xresources")
-
-local rofi_theme = filesystem.get_configuration_dir() .. "config/rofi.rasi"
-local rofi_command = "env /usr/bin/rofi -dpi "
-    .. xresources.get_dpi()
-    .. " -width "
-    .. xresources.apply_dpi(400)
-    .. " -show drun"
-
-if filesystem.file_readable(rofi_theme) then
-    rofi_command = rofi_command
-        .. " -theme "
-        .. filesystem.get_configuration_dir()
-        .. "config/rofi.rasi"
-end
-
-rofi_command = rofi_command
-    .. " -run-command \"/bin/bash -c -i 'shopt -s expand_aliases; {cmd}'\""
+local rofi_command = "rofi -show drun"
 
 return {
     default = {
