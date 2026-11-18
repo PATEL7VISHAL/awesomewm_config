@@ -6,7 +6,7 @@ local windows = require("config.windows")
 local M = {}
 
 local function rounded_shape(cr, width, height)
-    gears.shape.rounded_rect(cr, width, height, windows.floating_corner_radius)
+    gears.shape.rounded_rect(cr, width, height, windows.client_corner_radius)
 end
 
 local function fit_to_workarea(c)
@@ -44,6 +44,8 @@ function M.setup()
                 raise = true,
                 screen = awful.screen.preferred,
                 placement = awful.placement.no_overlap + awful.placement.no_offscreen,
+                shape = rounded_shape,
+                titlebars_enabled = false,
                 floating = false,
                 maximized = false,
                 above = false,
@@ -52,16 +54,6 @@ function M.setup()
                 sticky = false,
                 maximized_horizontal = false,
                 maximized_vertical = false,
-            },
-        })
-
-        ruled.client.append_rule({
-            id = "titlebars",
-            rule_any = {
-                type = { "normal" },
-            },
-            properties = {
-                titlebars_enabled = true,
             },
         })
 
@@ -120,8 +112,8 @@ function M.setup()
                 maximized_horizontal = false,
                 maximized_vertical = false,
                 size_hints_honor = false,
+                border_width = 0,
                 titlebars_enabled = false,
-                shape = rounded_shape,
             },
             callback = center_dialog,
         })
@@ -142,8 +134,8 @@ function M.setup()
                 maximized = false,
                 maximized_horizontal = false,
                 maximized_vertical = false,
+                border_width = 0,
                 titlebars_enabled = false,
-                shape = rounded_shape,
             },
             callback = fit_to_workarea,
         })
@@ -169,7 +161,7 @@ function M.setup()
                 class = { "TelegramDesktop" },
             },
             properties = {
-                tag = "5",
+                tag = "3",
                 titlebars_enabled = false,
             },
         })

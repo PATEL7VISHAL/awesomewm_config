@@ -36,7 +36,7 @@ require("bindings.client").setup({
 })
 
 require("rules.client").setup()
-require("ui.titlebars").setup()
 require("notifications").setup()
 require("signals.sloppy_focus").setup()
+require("signals.client_decoration").setup()
 require("core.autostart").setup(settings.apps)
