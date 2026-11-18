@@ -1,6 +1,7 @@
 local awful = require("awful")
 require("awful.autofocus")
 local wibox = require("wibox")
+local workspace_tags = require("ui.tags")
 
 local M = {}
 
@@ -9,7 +10,7 @@ function M.setup(opts)
     local mytextclock = wibox.widget.textclock()
 
     screen.connect_signal("request::desktop_decoration", function(s)
-        awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+        workspace_tags.create_for_screen(s)
 
         s.mypromptbox = awful.widget.prompt()
 

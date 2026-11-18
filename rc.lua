@@ -18,6 +18,7 @@ require("core.theme").setup(settings)
 local menu = require("ui.menu").build(settings)
 
 require("ui.layouts").setup()
+require("ui.tags").setup()
 require("ui.wallpaper").setup()
 require("ui.wibar").setup({
 	modkey = settings.modkey,

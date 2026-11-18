@@ -157,7 +157,7 @@ function M.setup()
                 },
             },
             properties = {
-                tag = "7",
+                tag = "5",
                 floating = true,
                 titlebars_enabled = false,
             },

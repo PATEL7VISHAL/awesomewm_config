@@ -14,6 +14,12 @@ function M.setup(opts)
             awful.button({ opts.modkey }, 3, function(c)
                 c:activate({ context = "mouse_click", action = "mouse_resize" })
             end),
+            awful.button({ opts.modkey }, 4, function()
+                awful.layout.inc(1)
+            end),
+            awful.button({ opts.modkey }, 5, function()
+                awful.layout.inc(-1)
+            end),
         })
     end)
 
