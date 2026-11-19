@@ -36,6 +36,7 @@ local function toggle_notifications()
     })
 end
 
+---@param opts GlobalBindingOptions
 function M.setup(opts)
     local modkey = opts.modkey
     local altkey = opts.altkey

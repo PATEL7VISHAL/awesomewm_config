@@ -2,6 +2,7 @@ local awful = require("awful")
 local apps = require("config.apps")
 local icons = require("theme.icons")
 
+---@type WorkspaceDefinition[]
 return {
     {
         name = "chrome",

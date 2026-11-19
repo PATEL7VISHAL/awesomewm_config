@@ -1,5 +1,6 @@
 local rofi_command = "rofi -show drun"
 
+---@type AppsConfig
 return {
     default = {
         terminal = "alacritty",

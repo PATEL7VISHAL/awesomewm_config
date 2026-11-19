@@ -1,5 +1,6 @@
 local dpi = require("beautiful.xresources").apply_dpi
 
+---@type WindowSettings
 return {
     client_border_width = dpi(1),
     client_border_color = "#6DC3EC",

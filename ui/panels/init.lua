@@ -69,6 +69,7 @@ local function create_panel(s, opts, launcher)
 	return panel
 end
 
+---@param opts PanelOptions
 function M.setup(opts)
 	local style = os.getenv("AWESOME_PANEL_STYLE") or panel_config.style
 	local preset = panel_config.presets[style]

@@ -2,6 +2,7 @@ local awful = require("awful")
 
 local M = {}
 
+---@param opts ClientBindingOptions
 function M.setup(opts)
     client.connect_signal("request::default_mousebindings", function()
         awful.mouse.append_client_mousebindings({

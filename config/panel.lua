@@ -1,5 +1,6 @@
 local dpi = require("beautiful.xresources").apply_dpi
 
+---@type PanelConfig
 return {
 	style = "bottom",
 	presets = {
