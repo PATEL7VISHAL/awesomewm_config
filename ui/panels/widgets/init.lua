@@ -1,5 +1,6 @@
 -- Public widget entrypoint: panel code imports individual widgets from here.
 return {
+	cpu = require("ui.panels.widgets.cpu"),
 	battery = require("ui.panels.widgets.battery"),
 	taglist = require("ui.panels.widgets.taglist"),
 	tasklist = require("ui.panels.widgets.tasklist"),

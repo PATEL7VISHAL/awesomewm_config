@@ -62,8 +62,8 @@ local function create()
 
 	local content = wibox.widget({
 		{
-			charging_icon,
 			bar,
+			charging_icon,
 			spacing = dpi(5),
 			layout = wibox.layout.fixed.horizontal,
 		},
