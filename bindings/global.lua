@@ -36,6 +36,8 @@ local function toggle_notifications()
     })
 end
 
+local exit_screen = require("ui.exit_screen")
+
 ---@param opts GlobalBindingOptions
 function M.setup(opts)
     local modkey = opts.modkey
@@ -55,6 +57,9 @@ function M.setup(opts)
         awful.key({ modkey, "Shift" }, ";", function()
             naughty.destroy_all_notifications(nil, "clear screen")
         end, { description = "clear notifications", group = "notifications" }),
+        awful.key({ modkey, "Shift" }, "l",function()
+            exit_screen.toggle()
+        end, { description = "toggle exit screen", group = "session" }),
 
         awful.key({ modkey }, "w", awful.tag.viewprev, { description = "view previous", group = "tag" }),
         awful.key({ modkey }, "s", awful.tag.viewnext, { description = "view next", group = "tag" }),

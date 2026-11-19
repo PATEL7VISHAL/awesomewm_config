@@ -19,6 +19,7 @@ function M.setup(settings)
     beautiful.panel_separator = theme.panel.separator
     beautiful.panel_indicator = theme.panel.indicator
     beautiful.widget_theme = theme.widgets
+    beautiful.exit_theme = theme.exit
     beautiful.widget_fonts = theme.fonts
     beautiful.font = theme.fonts.base.string
     beautiful.battery_normal = theme.widgets.battery.normal
