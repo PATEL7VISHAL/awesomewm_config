@@ -50,6 +50,7 @@ local function create_panel(s, opts, launcher)
 				},
 				{
 					widgets.cpu.new(),
+					widgets.ram.new(),
 					widgets.battery.new(),
 					awful.widget.keyboardlayout(),
 					wibox.widget.systray(),

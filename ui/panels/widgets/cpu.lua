@@ -282,7 +282,7 @@ local function create()
 			string.format("Usage: %.1f%%", current_usage),
 		}
 
-		if config.processes.enabled then
+		if (config.processes or {}).enabled then
 			lines[#lines + 1] = ""
 			lines[#lines + 1] = "Top processes:"
 
@@ -304,7 +304,7 @@ local function create()
 		return table.concat(lines, "\n")
 	end
 
-	if config.tooltip.enabled then
+	if (config.tooltip or {}).enabled then
 		awful.tooltip({
 			objects = { widget },
 			timer_function = update_tooltip,
