@@ -5,6 +5,14 @@ local M = {}
 
 function M.setup(settings)
     beautiful.init(settings.theme)
+    beautiful.battery_normal = beautiful.battery_normal or "#A6E3A1"
+    beautiful.battery_charging = beautiful.battery_charging or "#74C7EC"
+    beautiful.battery_warning = beautiful.battery_warning or "#F9E2AF"
+    beautiful.battery_critical = beautiful.battery_critical or "#F38BA8"
+    beautiful.battery_empty = beautiful.battery_empty or "#717284"
+    beautiful.battery_label_fg = beautiful.battery_label_fg
+        or beautiful.panel_bg
+        or beautiful.bg_normal
     beautiful.border_width = windows.client_border_width
     beautiful.border_width_active = windows.client_border_width
     beautiful.border_width_normal = windows.client_border_width

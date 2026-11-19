@@ -49,6 +49,7 @@ local function create_panel(s, opts, launcher)
 					layout = wibox.layout.fixed.horizontal,
 				},
 				{
+					widgets.battery.new(),
 					awful.widget.keyboardlayout(),
 					wibox.widget.systray(),
 					widgets.layoutbox(s),
