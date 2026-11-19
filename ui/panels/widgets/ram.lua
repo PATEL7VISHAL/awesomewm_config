@@ -23,6 +23,7 @@ local function create_ring()
 	local ring = wibox.widget.base.make_widget()
 
 	local appearance = config.appearance
+	local ram_theme = beautiful.widget_theme.ram
 
 	ring.draw = function(_, _, cr, width, height)
 		local size = math.min(width, height)
@@ -35,8 +36,8 @@ local function create_ring()
 
 		local usage = ram.get_state().usage or 0
 
-		local progress_color = appearance.progress_color or "#ffffff"
-		local track_color = appearance.track_color or "#ffffff"
+		local progress_color = ram_theme.progress or appearance.progress_color or "#ffffff"
+		local track_color = ram_theme.track or appearance.track_color or "#ffffff"
 
 		cr:save()
 
@@ -44,7 +45,7 @@ local function create_ring()
 		cr:set_line_cap(1)
 
 		-- Background track.
-		set_color(cr, track_color, appearance.track_opacity or 0.18)
+		set_color(cr, track_color, ram_theme.track_opacity or appearance.track_opacity or 0.18)
 
 		cr:arc(center_x, center_y, radius, 0, math.pi * 2)
 
@@ -102,6 +103,14 @@ local function create()
 	local font_family = appearance.font_family or "Ubuntu Mono"
 	local font_size = appearance.font_size or 11
 	local font_weight = appearance.font_weight or "bold"
+	local theme_font = beautiful.widget_fonts.ram
+	local ram_theme = beautiful.widget_theme.ram
+
+	if theme_font then
+		font_family = theme_font.family
+		font_size = theme_font.size
+		font_weight = theme_font.weight
+	end
 
 	local layout = wibox.layout.stack()
 
@@ -113,7 +122,7 @@ local function create()
 	local processes = state.processes or {}
 
 	local function update_percentage(usage)
-		local text_color = appearance.text_color or "#ffffff"
+		local text_color = ram_theme.text or appearance.text_color or "#ffffff"
 
 		percentage:set_markup(
 			string.format(

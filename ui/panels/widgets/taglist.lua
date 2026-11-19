@@ -24,11 +24,13 @@ local function buttons(modkey)
 end
 
 local function colors()
+    local indicator = beautiful.panel_indicator or {}
+
     return {
-        selected = beautiful.panel_accent or beautiful.border_color_active or "#7DD3FC",
-        occupied = beautiful.panel_occupied or beautiful.fg_normal or "#A7C7D9",
-        empty = beautiful.panel_inactive or beautiful.bg_focus or "#334155",
-        urgent = beautiful.panel_urgent or beautiful.border_color_urgent or "#FB7185",
+        selected = indicator.selected or beautiful.panel_accent or beautiful.border_color_active or "#7DD3FC",
+        occupied = indicator.occupied or beautiful.panel_occupied or beautiful.fg_normal or "#A7C7D9",
+        empty = indicator.empty or beautiful.panel_inactive or beautiful.bg_focus or "#334155",
+        urgent = indicator.urgent or beautiful.panel_urgent or beautiful.border_color_urgent or "#FB7185",
     }
 end
 

@@ -33,8 +33,7 @@ local function create()
 	local charging_icon = wibox.widget.textbox()
 	percentage.align = "center"
 	percentage.valign = "center"
-	-- percentage.font = string.format("Sans Bold %d", math.floor(dpi(10)))
-	percentage.font = string.format("Ubuntu Mono Bold %d", math.floor(dpi(11)))
+	percentage.font = beautiful.widget_fonts.battery.string
 
 	local progressbar = wibox.widget({
 		max_value = 100,

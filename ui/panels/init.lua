@@ -30,6 +30,7 @@ local function create_panel(s, opts, launcher)
 					{
 						{
 							forced_width = 1,
+							color = beautiful.panel_separator,
 							widget = wibox.widget.separator,
 						},
 						top = 6,

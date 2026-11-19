@@ -1,4 +1,5 @@
 local awful = require("awful")
+local beautiful = require("beautiful")
 local gears = require("gears")
 local wibox = require("wibox")
 
@@ -12,7 +13,7 @@ local clamp = drawing.clamp
 local set_color = drawing.set_color
 
 local function get_color(usage)
-	return drawing.color_at_threshold(usage, config.colors)
+	return drawing.color_at_threshold(usage, beautiful.widget_theme.cpu.colors or config.colors)
 end
 
 local function create_graph(history)
@@ -219,6 +220,7 @@ local function create()
 
 	local graph = create_graph(history)
 	local percentage = wibox.widget.textbox()
+	percentage.font = (beautiful.widget_fonts.cpu_text or beautiful.widget_fonts.cpu).string
 
 	local layout = wibox.layout.fixed.horizontal()
 	layout.spacing = 6
