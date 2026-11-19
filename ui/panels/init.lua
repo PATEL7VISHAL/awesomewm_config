@@ -44,7 +44,7 @@ local function create_panel(s, opts, launcher)
 				},
 				{
 					widgets.clock(opts.clock_format),
-					launcher,
+					-- launcher,
 					spacing = opts.spacing,
 					layout = wibox.layout.fixed.horizontal,
 				},
