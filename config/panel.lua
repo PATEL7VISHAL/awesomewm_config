@@ -10,11 +10,11 @@ return {
 			margin = dpi(4),
 			spacing = dpi(4),
 			workspace_style = "indicator", -- indicator or pill
-			clock_format = "%a %b %e  %H:%M:%S",
+			clock_format = "%a %b %e  •  %I:%M:%S %p",
 		},
 		top = {
 			position = "top",
-			height = dpi(34),
+			height = dpi(32),
 			margin = dpi(4),
 			spacing = dpi(4),
 			workspace_style = "pill",

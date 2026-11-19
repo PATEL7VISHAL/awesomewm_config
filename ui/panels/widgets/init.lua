@@ -6,5 +6,7 @@ return {
 	taglist = require("ui.panels.widgets.taglist"),
 	tasklist = require("ui.panels.widgets.tasklist"),
 	layoutbox = require("ui.panels.widgets.layoutbox"),
+	systray = require("ui.panels.widgets.systray"),
 	clock = require("ui.panels.widgets.clock"),
+	power_menu = require("ui.panels.widgets.power_menu"),
 }

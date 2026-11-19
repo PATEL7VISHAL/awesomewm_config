@@ -3,7 +3,8 @@ local gears = require("gears")
 
 local M = {}
 
-local POLL_INTERVAL = 30
+-- Keep charging-state changes reasonably responsive without frequent polling.
+local POLL_INTERVAL = 15
 
 local timer
 local polling = false

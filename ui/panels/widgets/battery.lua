@@ -34,6 +34,9 @@ local function create()
 	percentage.align = "center"
 	percentage.valign = "center"
 	percentage.font = beautiful.widget_fonts.battery.string
+	charging_icon.align = "center"
+	charging_icon.valign = "center"
+	charging_icon.font = beautiful.widget_fonts.battery.string
 
 	local progressbar = wibox.widget({
 		max_value = 100,
@@ -63,7 +66,7 @@ local function create()
 		{
 			bar,
 			charging_icon,
-			spacing = dpi(5),
+			spacing = dpi(1),
 			layout = wibox.layout.fixed.horizontal,
 		},
 		forced_height = dpi(18),
@@ -89,7 +92,13 @@ local function create()
 		percentage:set_markup(
 			string.format('<span foreground="%s">%d</span>', beautiful.battery_label_fg, state.percentage)
 		)
-		charging_icon:set_text(state.charging and "⚡" or "")
+		if state.charging then
+			charging_icon:set_markup(
+				string.format('<span foreground="%s">⚡</span>', beautiful.battery_charging)
+			)
+		else
+			charging_icon:set_text("")
+		end
 	end
 
 	local function update_tooltip()
