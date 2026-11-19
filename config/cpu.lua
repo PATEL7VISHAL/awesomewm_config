@@ -15,10 +15,10 @@ return {
 
 	-- Green / White / Orange / Red
 	colors = {
-		{ threshold = 0, color = "#96e391" },
-		{ threshold = 25, color = "#cdc6b4" },
-		{ threshold = 55, color = "#faa387" },
-		{ threshold = 80, color = "#f37b88" },
+		{ threshold = 0, color = "#86e381" },
+		{ threshold = 25, color = "#cdb6b4" },
+		{ threshold = 55, color = "#faa377" },
+		{ threshold = 80, color = "#f36b98" },
 	},
 
 	-- Graph appearance

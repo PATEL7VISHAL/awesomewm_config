@@ -4,64 +4,15 @@ local wibox = require("wibox")
 
 local config = require("config.cpu")
 local cpu = require("core.cpu")
+local drawing = require("ui.panels.widgets.lib.drawing")
 
 local M = {}
 
--- Convert #RRGGBB to normalized RGB.
-local function parse_color(color)
-	color = color:gsub("#", "")
-
-	return tonumber(color:sub(1, 2), 16) / 255, tonumber(color:sub(3, 4), 16) / 255, tonumber(color:sub(5, 6), 16) / 255
-end
+local clamp = drawing.clamp
+local set_color = drawing.set_color
 
 local function get_color(usage)
-	local colors = config.colors
-
-	local first = colors[1]
-	local last = colors[#colors]
-
-	if usage <= first.threshold then
-		return first.color
-	end
-
-	if usage >= last.threshold then
-		return last.color
-	end
-
-	for i = 1, #colors - 1 do
-		local a = colors[i]
-		local b = colors[i + 1]
-
-		if usage >= a.threshold and usage <= b.threshold then
-			local t = (usage - a.threshold) / (b.threshold - a.threshold)
-
-			local ar, ag, ab = parse_color(a.color)
-			local br, bg, bb = parse_color(b.color)
-
-			local r = ar + (br - ar) * t
-			local g = ag + (bg - ag) * t
-			local blue = ab + (bb - ab) * t
-
-			return string.format(
-				"#%02x%02x%02x",
-				math.floor(r * 255 + 0.5),
-				math.floor(g * 255 + 0.5),
-				math.floor(blue * 255 + 0.5)
-			)
-		end
-	end
-
-	return last.color
-end
-
-local function set_color(cr, color, alpha)
-	local r, g, b = parse_color(color)
-
-	cr:set_source_rgba(r, g, b, alpha or 1)
-end
-
-local function clamp(value, minimum, maximum)
-	return math.max(minimum, math.min(maximum, value))
+	return drawing.color_at_threshold(usage, config.colors)
 end
 
 local function create_graph(history)
@@ -89,49 +40,43 @@ local function create_graph(history)
 		return x, y
 	end
 
-	-- Calculate Catmull-Rom control points for one segment.
+	-- Catmull-Rom interpolation converted to cubic Bezier.
 	local function get_curve_controls(index, width, height)
 		local count = #history
 
-		local p0x, p0y = get_point(math.max(1, index - 1), width, height)
+		local _, p0y = get_point(math.max(1, index - 1), width, height)
 
 		local p1x, p1y = get_point(index, width, height)
 		local p2x, p2y = get_point(index + 1, width, height)
 
-		local p3x, p3y = get_point(math.min(count, index + 2), width, height)
+		local _, p3y = get_point(math.min(count, index + 2), width, height)
 
 		local tension = curve_config.tension or 1.0
 		local factor = tension / 6
 
-		local cp1x = p1x + (p2x - p0x) * factor
+		local cp1x = p1x + (p2x - (index > 1 and get_point(index - 1, width, height) or p1x)) * factor
 		local cp1y = p1y + (p2y - p0y) * factor
 
-		local cp2x = p2x - (p3x - p1x) * factor
+		local cp2x = p2x
+			- ((index + 2 <= count and select(1, get_point(index + 2, width, height)) or p2x) - p1x) * factor
 		local cp2y = p2y - (p3y - p1y) * factor
 
-		-- Prevent vertical overshooting.
 		cp1y = clamp(cp1y, 0, height)
 		cp2y = clamp(cp2y, 0, height)
 
 		return cp1x, cp1y, cp2x, cp2y, p2x, p2y
 	end
 
-	-- Draw a complete smooth curve path.
-	local function draw_curve_path(cr, width, height)
-		local count = #history
-
-		local first_x, first_y = get_point(1, width, height)
-
-		cr:move_to(first_x, first_y)
-
-		for i = 1, count - 1 do
+	-- Append curve segments to the current Cairo path.
+	local function append_curve_path(cr, width, height)
+		for i = 1, #history - 1 do
 			local cp1x, cp1y, cp2x, cp2y, x2, y2 = get_curve_controls(i, width, height)
 
 			cr:curve_to(cp1x, cp1y, cp2x, cp2y, x2, y2)
 		end
 	end
 
-	-- Style A: Smooth gradient line + filled area.
+	-- Style A: Smooth line + filled area.
 	local function draw_area(cr, width, height)
 		local count = #history
 
@@ -140,21 +85,20 @@ local function create_graph(history)
 		end
 
 		local first_x, first_y = get_point(1, width, height)
+		local last_x = get_point(count, width, height)
 
 		-- Filled area.
 		cr:move_to(first_x, height)
 		cr:line_to(first_x, first_y)
 
 		if count > 1 and curve_config.enabled then
-			draw_curve_path(cr, width, height)
+			append_curve_path(cr, width, height)
 		else
 			for i = 2, count do
 				local x, y = get_point(i, width, height)
 				cr:line_to(x, y)
 			end
 		end
-
-		local last_x = get_point(count, width, height)
 
 		cr:line_to(last_x, height)
 		cr:close_path()
@@ -163,12 +107,11 @@ local function create_graph(history)
 
 		cr:fill()
 
-		-- Draw individually colored line segments.
+		-- Draw the colored line.
 		if count == 1 then
 			local x, y = get_point(1, width, height)
 
 			set_color(cr, get_color(history[1]))
-
 			cr:arc(x, y, 2, 0, math.pi * 2)
 			cr:fill()
 
@@ -201,28 +144,6 @@ local function create_graph(history)
 		end
 	end
 
-	-- Draw a rounded rectangle for Style B.
-	local function rounded_rectangle(cr, x, y, width, height, radius)
-		radius = math.min(radius, width / 2, height / 2)
-
-		if radius <= 0 then
-			cr:rectangle(x, y, width, height)
-			return
-		end
-
-		cr:new_sub_path()
-
-		cr:arc(x + width - radius, y + radius, radius, -math.pi / 2, 0)
-
-		cr:arc(x + width - radius, y + height - radius, radius, 0, math.pi / 2)
-
-		cr:arc(x + radius, y + height - radius, radius, math.pi / 2, math.pi)
-
-		cr:arc(x + radius, y + radius, radius, math.pi, math.pi * 1.5)
-
-		cr:close_path()
-	end
-
 	-- Style B: Individual colored bars.
 	local function draw_bars(cr, width, height)
 		local count = #history
@@ -234,14 +155,12 @@ local function create_graph(history)
 		local requested_gap = appearance.bar_gap or 2
 		local requested_width = appearance.bar_width or 5
 
-		-- Adapt bar dimensions to available graph width.
 		local bar_gap = math.min(requested_gap, (width / count) * 0.2)
 
 		local available_width = width - math.max(0, count - 1) * bar_gap
 
 		local bar_width = math.min(requested_width, available_width / count)
 
-		-- Keep shorter histories right-aligned.
 		local total_width = count * bar_width + math.max(0, count - 1) * bar_gap
 
 		local offset = math.max(0, width - total_width)
@@ -258,7 +177,7 @@ local function create_graph(history)
 			set_color(cr, get_color(usage))
 
 			if rounded then
-				rounded_rectangle(cr, x, y, bar_width, bar_height, radius)
+				drawing.rounded_rectangle(cr, x, y, bar_width, bar_height, radius)
 			else
 				cr:rectangle(x, y, bar_width, bar_height)
 			end
@@ -269,8 +188,6 @@ local function create_graph(history)
 
 	graph.draw = function(_, _, cr, width, height)
 		cr:save()
-
-		-- Leave a little room around the graph edges.
 		cr:translate(1, 1)
 
 		width = math.max(1, width - 2)
@@ -301,7 +218,6 @@ local function create()
 	local processes = state.processes or {}
 
 	local graph = create_graph(history)
-
 	local percentage = wibox.widget.textbox()
 
 	local layout = wibox.layout.fixed.horizontal()
@@ -315,7 +231,7 @@ local function create()
 
 	local widget = wibox.container.background(layout)
 
-	-- EMA state is used only for graph display.
+	-- Optional display-only EMA smoothing.
 	local smoothing_config = (config.rendering or {}).smoothing or {}
 
 	local smoothed_usage
@@ -327,7 +243,6 @@ local function create()
 	end
 
 	local function update_graph(usage)
-		-- Preserve actual CPU usage for the tooltip and percentage.
 		current_usage = usage
 
 		local display_usage = usage
@@ -409,7 +324,6 @@ local function create()
 		processes = data
 	end)
 
-	-- Initial state.
 	update_percentage(current_usage)
 
 	if current_usage > 0 then
