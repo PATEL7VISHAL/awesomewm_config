@@ -66,7 +66,7 @@ local function create()
 		{
 			bar,
 			charging_icon,
-			spacing = dpi(1),
+			spacing = dpi(0),
 			layout = wibox.layout.fixed.horizontal,
 		},
 		forced_height = dpi(18),
@@ -93,9 +93,7 @@ local function create()
 			string.format('<span foreground="%s">%d</span>', beautiful.battery_label_fg, state.percentage)
 		)
 		if state.charging then
-			charging_icon:set_markup(
-				string.format('<span foreground="%s">⚡</span>', beautiful.battery_charging)
-			)
+			charging_icon:set_markup(string.format('<span foreground="%s">⚡</span>', beautiful.battery_charging))
 		else
 			charging_icon:set_text("")
 		end

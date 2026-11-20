@@ -27,6 +27,10 @@ return {
         { command = "pnmixer", process = "pnmixer" },
         { command = "flameshot", process = "flameshot" },
         { command = "Telegram", process = "Telegram" },
+        {
+            command = "/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1",
+            process = "polkit-kde-authentication-agent-1",
+        },
     },
 
     run_on_start_up_commands = {
