@@ -13,10 +13,10 @@ local previous_total
 local previous_idle
 
 local cpu_timer
-local process_timer
 
 local process_running = false
 local started = false
+local last_process_refresh
 
 local function read_cpu_info()
 	local file = io.open("/proc/cpuinfo", "r")
@@ -132,6 +132,23 @@ function M.get_state()
 	return state
 end
 
+function M.refresh_processes(config)
+	local process_config = config.processes or {}
+	if not process_config.enabled or process_running then
+		return
+	end
+
+	local now = os.time()
+	local interval = process_config.interval or 5
+
+	if last_process_refresh and now - last_process_refresh < interval then
+		return
+	end
+
+	last_process_refresh = now
+	read_processes(process_config.limit or 5)
+end
+
 function M.start(config)
 	if started or not config.enabled then
 		return
@@ -161,23 +178,6 @@ function M.start(config)
 		call_now = false,
 		callback = sample,
 	})
-
-	local process_config = config.processes or {}
-
-	if process_config.enabled then
-		local function collect_processes()
-			read_processes(process_config.limit or 5)
-		end
-
-		collect_processes()
-
-		process_timer = gears.timer({
-			timeout = process_config.interval or 5,
-			autostart = true,
-			call_now = false,
-			callback = collect_processes,
-		})
-	end
 end
 
 function M.stop()
@@ -186,13 +186,9 @@ function M.stop()
 		cpu_timer = nil
 	end
 
-	if process_timer then
-		process_timer:stop()
-		process_timer = nil
-	end
-
 	started = false
 	process_running = false
+	last_process_refresh = nil
 
 	previous_total = nil
 	previous_idle = nil

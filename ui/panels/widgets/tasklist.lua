@@ -95,6 +95,19 @@ local function update_indicator(self, c)
 end
 
 function M.new(s, opts)
+	-- One tooltip for all tasks; per-task tooltips each create a wibox.
+	local shared_tooltip_target
+	local shared_tooltip = awful.tooltip({
+		mode = "outside",
+		preferred_positions = opts and opts.position == "bottom" and { "top" } or { "bottom" },
+		timer_function = function()
+			local task_client = shared_tooltip_target and shared_tooltip_target._task_client
+			return task_client and task_client.valid
+				and (task_client.name or task_client.class or "Window")
+				or ""
+		end,
+	})
+
 	local tasklist = awful.widget.tasklist({
 		screen = s,
 
@@ -166,17 +179,10 @@ function M.new(s, opts)
 
 			create_callback = function(self, c)
 				self._task_client = c
-				self._task_tooltip = awful.tooltip({
-					objects = { self },
-					mode = "outside",
-					preferred_positions = opts and opts.position == "bottom" and { "top" } or { "bottom" },
-					timer_function = function()
-						local task_client = self._task_client
-						return task_client and task_client.valid
-							and (task_client.name or task_client.class or "Window")
-							or ""
-					end,
-				})
+				self:connect_signal("mouse::enter", function()
+					shared_tooltip_target = self
+				end)
+				shared_tooltip:add_to_object(self)
 				update_indicator(self, c)
 			end,
 

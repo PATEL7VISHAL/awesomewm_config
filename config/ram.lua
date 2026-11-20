@@ -4,7 +4,7 @@ return {
 	-- Memory polling interval in seconds.
 	interval = 3,
 
-	-- Process collection interval in seconds.
+	-- Minimum interval between tooltip-triggered process samples.
 	process_interval = 5,
 
 	-- Number of RAM-heavy processes in tooltip.

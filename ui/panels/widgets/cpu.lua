@@ -238,10 +238,18 @@ local function create()
 
 	local smoothed_usage
 
+	local last_markup
+
 	local function update_percentage(usage)
 		local color = get_color(usage)
 
-		percentage:set_markup(string.format('<span foreground="%s">%d%%</span>', color, math.floor(usage + 0.5)))
+		local markup = string.format('<span foreground="%s">%d%%</span>', color, math.floor(usage + 0.5))
+
+		-- set_markup always invalidates layout, so skip unchanged text.
+		if markup ~= last_markup then
+			last_markup = markup
+			percentage:set_markup(markup)
+		end
 	end
 
 	local function update_graph(usage)
@@ -314,6 +322,10 @@ local function create()
 			margin_leftright = 8,
 			margin_topbottom = 6,
 		})
+
+		widget:connect_signal("mouse::enter", function()
+			cpu.refresh_processes(config)
+		end)
 	end
 
 	widget:buttons(gears.table.join(awful.button({}, 1, function()

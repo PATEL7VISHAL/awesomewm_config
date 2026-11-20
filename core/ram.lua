@@ -12,10 +12,10 @@ local state = {
 }
 
 local timer
-local process_timer
 
 local process_running = false
 local started = false
+local last_process_refresh
 
 local function read_memory()
 	local file = io.open("/proc/meminfo", "r")
@@ -105,6 +105,22 @@ function M.get_state()
 	return state
 end
 
+function M.refresh_processes(config)
+	if process_running then
+		return
+	end
+
+	local now = os.time()
+	local interval = config.process_interval or 5
+
+	if last_process_refresh and now - last_process_refresh < interval then
+		return
+	end
+
+	last_process_refresh = now
+	read_processes(config.process_limit or 5)
+end
+
 function M.start(config)
 	if started or not config.enabled then
 		return
@@ -120,19 +136,6 @@ function M.start(config)
 		call_now = false,
 		callback = sample,
 	})
-
-	local function collect_processes()
-		read_processes(config.process_limit or 5)
-	end
-
-	collect_processes()
-
-	process_timer = gears.timer({
-		timeout = config.process_interval or 5,
-		autostart = true,
-		call_now = false,
-		callback = collect_processes,
-	})
 end
 
 function M.stop()
@@ -141,13 +144,9 @@ function M.stop()
 		timer = nil
 	end
 
-	if process_timer then
-		process_timer:stop()
-		process_timer = nil
-	end
-
 	started = false
 	process_running = false
+	last_process_refresh = nil
 end
 
 return M

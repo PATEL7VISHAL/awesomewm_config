@@ -121,19 +121,25 @@ local function create()
 
 	local processes = state.processes or {}
 
+	local last_markup
+
 	local function update_percentage(usage)
 		local text_color = ram_theme.text or appearance.text_color or "#ffffff"
 
-		percentage:set_markup(
-			string.format(
-				'<span foreground="%s" font_family="%s" font_weight="%s" size="%dpt">%d</span>',
-				text_color,
-				font_family,
-				font_weight,
-				font_size,
-				math.floor(usage + 0.5)
-			)
+		local markup = string.format(
+			'<span foreground="%s" font_family="%s" font_weight="%s" size="%dpt">%d</span>',
+			text_color,
+			font_family,
+			font_weight,
+			font_size,
+			math.floor(usage + 0.5)
 		)
+
+		-- set_markup always invalidates layout, so skip unchanged text.
+		if markup ~= last_markup then
+			last_markup = markup
+			percentage:set_markup(markup)
+		end
 
 		ring:emit_signal("widget::redraw_needed")
 	end
@@ -179,6 +185,10 @@ local function create()
 			margin_leftright = 8,
 			margin_topbottom = 6,
 		})
+
+		widget:connect_signal("mouse::enter", function()
+			ram.refresh_processes(config)
+		end)
 	end
 
 	awesome.connect_signal("ram::update", function(data)

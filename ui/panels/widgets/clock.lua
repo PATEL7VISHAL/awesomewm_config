@@ -349,8 +349,6 @@ local function new(screen, format, opts)
 		end)
 	))
 
-	refresh_calendar()
-
 	return clock
 end
 

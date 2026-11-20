@@ -1,13 +1,8 @@
 local awful = require("awful")
-local gears = require("gears")
 local ruled = require("ruled")
 local windows = require("config.windows")
 
 local M = {}
-
-local function rounded_shape(cr, width, height)
-    gears.shape.rounded_rect(cr, width, height, windows.client_corner_radius)
-end
 
 local function fit_to_workarea(c)
     local workarea = c.screen and c.screen.workarea
@@ -44,7 +39,6 @@ function M.setup()
                 raise = true,
                 screen = awful.screen.preferred,
                 placement = awful.placement.no_overlap + awful.placement.no_offscreen,
-                shape = rounded_shape,
                 titlebars_enabled = false,
                 floating = false,
                 maximized = false,

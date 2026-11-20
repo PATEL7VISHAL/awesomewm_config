@@ -51,6 +51,7 @@ return {
 
 	processes = {
 		enabled = true,
+		-- Minimum interval between tooltip-triggered process samples.
 		interval = 5,
 		limit = 5,
 	},
