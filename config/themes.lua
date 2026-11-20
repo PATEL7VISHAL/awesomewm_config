@@ -10,8 +10,9 @@ local function font(family, size, weight)
 end
 
 local common_fonts = {
-	base = font("Ubuntu Sans", 10),
-	clock = font("Ubuntu", 11, "bold"),
+	base = font("Ubuntu Sans", 11),
+	clock = font("Ubuntu", 13, "bold"),
+	calendar = font("Ubuntu", 11, "bold"),
 	battery = font("Ubuntu Mono", 11, "bold"),
 	cpu = font("Ubuntu Mono", 11, "bold"),
 	cpu_text = font("Ubuntu Mono", 11, "bold"),

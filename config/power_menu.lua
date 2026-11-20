@@ -7,7 +7,7 @@ return {
 	button = {
 		size = dpi(34),
 		icon_size = dpi(22),
-		background = beautiful.exit_theme.button_background or beautiful.panel_bg,
+		background = beautiful.exit_theme.background or beautiful.panel_bg,
 		hover_background = "#ffffff12",
 	},
 

@@ -8,8 +8,11 @@ local accent = beautiful.panel_accent or indicator.selected or "#3985ed"
 
 return {
 	format = "%a %b %e  •  %I:%M:%S %p",
+	font = beautiful.widget_fonts.clock.string or beautiful.font,
+	interval = 1,
 
 	calendar = {
+		font = beautiful.widget_fonts.calendar.string or beautiful.font,
 		width = dpi(276),
 		padding = dpi(14),
 

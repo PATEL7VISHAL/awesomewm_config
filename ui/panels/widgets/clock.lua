@@ -14,7 +14,7 @@ local function make_text(text, color, font)
 		markup = string.format('<span foreground="%s">%s</span>', color or c.foreground, text),
 		align = "center",
 		valign = "center",
-		font = font or beautiful.font,
+		font = font or c.font or beautiful.font,
 		widget = wibox.widget.textbox,
 	})
 end
@@ -215,7 +215,8 @@ local function place_popup(popup, screen, panel_position)
 end
 
 local function new(screen, format, opts)
-	local clock = wibox.widget.textclock(format or config.format)
+	local clock = wibox.widget.textclock(format or config.format, config.interval)
+	clock.font = opts and opts.font or config.font or beautiful.font
 
 	local now = os.date("*t")
 	local displayed_year = now.year

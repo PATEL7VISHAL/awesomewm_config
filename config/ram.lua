@@ -1,3 +1,5 @@
+local beautiful = require("beautiful")
+
 return {
 	enabled = true,
 
@@ -17,9 +19,9 @@ return {
 		thickness = 4,
 
 		-- Center percentage.
-		font_family = "Ubuntu Mono",
-		font_size = 11,
-		font_weight = "bold",
+		font_family = beautiful.widget_fonts.ram.family or "Ubuntu Mono",
+		font_size = beautiful.widget_fonts.ram.size or 11,
+		font_weight = beautiful.widget_fonts.ram.weight or "bold",
 
 		-- Pure white.
 		progress_color = "#ffffff",
