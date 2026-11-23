@@ -26,13 +26,14 @@ local function create_ring()
 	local ram_theme = beautiful.widget_theme.ram
 
 	ring.draw = function(_, _, cr, width, height)
-		local size = math.min(width, height)
+		-- Snap the ring to whole pixels so strokes stay crisp.
+		local size = math.floor(math.min(width, height))
 
 		local thickness = appearance.thickness or 4
 		local radius = math.max(0, (size - thickness) / 2)
 
-		local center_x = width / 2
-		local center_y = height / 2
+		local center_x = math.floor((width - size) / 2) + size / 2
+		local center_y = math.floor((height - size) / 2) + size / 2
 
 		local usage = ram.get_state().usage or 0
 

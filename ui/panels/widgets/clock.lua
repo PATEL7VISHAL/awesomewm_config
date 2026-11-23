@@ -6,8 +6,26 @@ local beautiful = require("beautiful")
 local config = require("config.clock")
 local dpi = beautiful.xresources.apply_dpi
 
-local c = config.calendar
+local c = gears.table.clone(config.calendar, false)
 local M = {}
+
+-- Grow the fixed sizes from config/clock.lua when the calendar font needs more room.
+do
+	local font_height = beautiful.get_font_height(c.font or beautiful.font)
+	local cell_height = font_height + dpi(10)
+	local probe = wibox.widget.textbox()
+	probe.font = c.font or beautiful.font
+	probe.text = "Wed"
+	local name_width = wibox.widget.base.fit_widget(probe, { dpi = 96 }, probe, 1000, 1000)
+	local cell_width = math.max(c.cell_width, cell_height, name_width + dpi(8))
+
+	c.cell_height = math.max(c.cell_height, cell_height)
+	c.weekday_height = math.max(c.weekday_height, font_height + dpi(4))
+	c.cell_width = cell_width
+	c.width = math.max(c.width, 7 * cell_width + 6 * c.spacing + 2 * c.padding + 2 * dpi(1))
+	c.header_height = math.max(dpi(30), font_height + dpi(8))
+	c.nav_size = math.max(dpi(28), font_height + dpi(6))
+end
 
 local function make_text(text, color, font)
 	return wibox.widget({
@@ -31,8 +49,8 @@ end
 local function make_navigation_button(symbol, callback)
 	local label = make_text(symbol, c.navigation_foreground)
 
-	label.forced_width = dpi(28)
-	label.forced_height = dpi(26)
+	label.forced_width = c.nav_size
+	label.forced_height = c.nav_size
 
 	local button = wibox.container.background(label, nil, gears.shape.rounded_rect, c.navigation_radius)
 
@@ -108,11 +126,11 @@ local function build_calendar(year, month, previous, next_month)
 
 	header:set_left(make_navigation_button("‹", previous))
 
-	header:set_middle(make_text(month_title(year, month), c.header_foreground, beautiful.font))
+	header:set_middle(make_text(month_title(year, month), c.header_foreground, c.font or beautiful.font))
 
 	header:set_right(make_navigation_button("›", next_month))
 
-	header.forced_height = dpi(30)
+	header.forced_height = c.header_height
 
 	content:add(header)
 
@@ -180,9 +198,7 @@ local function build_calendar(year, month, previous, next_month)
 	return content
 end
 
-local function place_popup(popup, screen, panel_position)
-	local anchor = mouse.current_widget_geometry
-
+local function place_popup(popup, screen, panel_position, anchor)
 	if not anchor then
 		return
 	end
@@ -193,24 +209,27 @@ local function place_popup(popup, screen, panel_position)
 	local panel_y = panel_geometry and panel_geometry.y or anchor.y
 	local panel_width = panel_geometry and panel_geometry.width or screen_geometry.width
 	local panel_height = panel_geometry and panel_geometry.height or anchor.height
-	local x = anchor.x + anchor.width / 2 - popup.width / 2
+	local geometry = popup:geometry()
+	local width = geometry.width
+	local height = geometry.height
+	local x = anchor.x + anchor.width / 2 - width / 2
 	local y
 
 	if panel_position == "top" then
 		y = panel_y + panel_height + c.offset
 	else
-		y = panel_y - popup.height - c.offset
+		y = panel_y - height - c.offset
 	end
 
-	x = math.max(screen_geometry.x, math.min(x, screen_geometry.x + screen_geometry.width - popup.width))
-	x = math.max(panel_x, math.min(x, panel_x + panel_width - popup.width))
-	y = math.max(screen_geometry.y, math.min(y, screen_geometry.y + screen_geometry.height - popup.height))
+	x = math.max(screen_geometry.x, math.min(x, screen_geometry.x + screen_geometry.width - width))
+	x = math.max(panel_x, math.min(x, panel_x + panel_width - width))
+	y = math.max(screen_geometry.y, math.min(y, screen_geometry.y + screen_geometry.height - height))
 
 	popup:geometry({
 		x = x,
 		y = y,
-		width = popup.width,
-		height = popup.height,
+		width = width,
+		height = height,
 	})
 end
 
@@ -283,8 +302,18 @@ local function new(screen, format, opts)
 		reset_calendar()
 		refresh_calendar()
 
-		place_popup(popup, screen, opts and opts.position)
+		-- Size is only known after the first layout, so place again once shown.
+		local anchor = mouse.current_widget_geometry
 		popup.visible = true
+		place_popup(popup, screen, opts and opts.position, anchor)
+		-- Layout finishes after the first draw, so correct once more shortly after.
+		gears.timer.start_new(0.03, function()
+			if popup.visible then
+				place_popup(popup, screen, opts and opts.position, anchor)
+			end
+
+			return false
+		end)
 	end
 
 	local function hide_popup()

@@ -102,9 +102,7 @@ function M.new(s, opts)
 		preferred_positions = opts and opts.position == "bottom" and { "top" } or { "bottom" },
 		timer_function = function()
 			local task_client = shared_tooltip_target and shared_tooltip_target._task_client
-			return task_client and task_client.valid
-				and (task_client.name or task_client.class or "Window")
-				or ""
+			return task_client and task_client.valid and (task_client.name or task_client.class or "Window") or ""
 		end,
 	})
 
@@ -134,6 +132,7 @@ function M.new(s, opts)
 						{
 							id = "icon_role",
 							resize = true,
+							-- scaling_quality = "best",
 							widget = wibox.widget.imagebox,
 						},
 
