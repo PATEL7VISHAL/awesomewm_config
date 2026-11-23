@@ -14,6 +14,7 @@ local common_fonts = {
 	clock = font("Ubuntu", 13, "bold"),
 	calendar = font("Ubuntu", 13, "bold"),
 	battery = font("Ubuntu Mono", 11, "bold"),
+	network = font("Ubuntu", 11, "bold"),
 	cpu = font("Ubuntu Mono", 11, "bold"),
 	cpu_text = font("Ubuntu Mono", 11, "bold"),
 	ram = font("Ubuntu Mono", 11, "bold"),
