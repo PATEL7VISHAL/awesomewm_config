@@ -1,9 +1,9 @@
-local awful = require("awful")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
 
 local config = require("config.ram")
 local ram = require("core.ram")
+local tooltip = require("ui.tooltip")
 
 local M = {}
 
@@ -146,45 +146,34 @@ local function create()
 	end
 
 	local function update_tooltip()
-		local lines = {
-			"Memory",
+		local rows = {
+			{ "Used", string.format("%s / %s", format_memory(state.used_kb), format_memory(state.total_kb)) },
+			{ "Usage", string.format("%.1f%%", state.usage) },
+			{ "Available", format_memory(state.available_kb) },
 			"",
-			string.format("Used: %s / %s", format_memory(state.used_kb), format_memory(state.total_kb)),
-			string.format("Usage: %.1f%%", state.usage),
-			string.format("Available: %s", format_memory(state.available_kb)),
-			"",
-			"Top processes:",
+			{ section = "Top processes" },
 		}
 
 		if #processes == 0 then
-			lines[#lines + 1] = "  No process data"
+			rows[#rows + 1] = "No process data"
 		end
 
 		for i, process in ipairs(processes) do
 			local percentage_of_total = state.total_kb > 0 and (process.rss_kb / state.total_kb) * 100 or 0
 
-			lines[#lines + 1] = string.format(
-				"  %d. %s  %s (%.1f%%)",
-				i,
-				process.name,
-				format_memory(process.rss_kb),
-				percentage_of_total
-			)
+			rows[#rows + 1] = {
+				tostring(i),
+				string.format("%s  %s (%.1f%%)", process.name, format_memory(process.rss_kb), percentage_of_total),
+			}
 		end
 
-		lines[#lines + 1] = ""
-		lines[#lines + 1] = "Process memory: RSS"
-
-		return table.concat(lines, "\n")
+		return tooltip.format("Memory", rows, "Process memory: RSS")
 	end
 
 	if (config.tooltip or {}).enabled then
-		awful.tooltip({
+		tooltip.new({
 			objects = { widget },
 			timer_function = update_tooltip,
-			preferred_positions = { "top", "bottom" },
-			margin_leftright = 8,
-			margin_topbottom = 6,
 		})
 
 		widget:connect_signal("mouse::enter", function()

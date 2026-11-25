@@ -6,6 +6,7 @@ local wibox = require("wibox")
 local config = require("config.cpu")
 local cpu = require("core.cpu")
 local drawing = require("ui.panels.widgets.lib.drawing")
+local tooltip = require("ui.tooltip")
 
 local M = {}
 
@@ -285,42 +286,31 @@ local function create()
 	end
 
 	local function update_tooltip()
-		local lines = {
-			"CPU",
-			"",
-			"Model: " .. state.model,
-			string.format("Usage: %.1f%%", current_usage),
+		local rows = {
+			{ "Model", state.model },
+			{ "Usage", string.format("%.1f%%", current_usage) },
 		}
 
 		if (config.processes or {}).enabled then
-			lines[#lines + 1] = ""
-			lines[#lines + 1] = "Top processes:"
+			rows[#rows + 1] = ""
+			rows[#rows + 1] = { section = "Top processes" }
 
 			if #processes == 0 then
-				lines[#lines + 1] = "  No process data"
+				rows[#rows + 1] = "No process data"
 			end
 
 			for i, process in ipairs(processes) do
-				lines[#lines + 1] = string.format("  %d. %s  %.1f%%", i, process.name, process.usage)
+				rows[#rows + 1] = { tostring(i), string.format("%s  %.1f%%", process.name, process.usage) }
 			end
-
-			lines[#lines + 1] = ""
-			lines[#lines + 1] = "Process CPU: lifetime average"
 		end
 
-		lines[#lines + 1] = ""
-		lines[#lines + 1] = "Click to open Task Manager"
-
-		return table.concat(lines, "\n")
+		return tooltip.format("CPU", rows, "Process CPU: lifetime average  •  Click to open Task Manager")
 	end
 
 	if (config.tooltip or {}).enabled then
-		awful.tooltip({
+		tooltip.new({
 			objects = { widget },
 			timer_function = update_tooltip,
-			preferred_positions = { "top", "bottom" },
-			margin_leftright = 8,
-			margin_topbottom = 6,
 		})
 
 		widget:connect_signal("mouse::enter", function()

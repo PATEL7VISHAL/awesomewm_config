@@ -47,6 +47,20 @@
 ---@field client_corner_radius number
 ---@field dialog_max_width_ratio number
 ---@field dialog_max_height_ratio number
+---@field popup_corner_radius number
+---@field tooltip_margin_leftright number
+---@field tooltip_margin_topbottom number
+---@field tooltip_tail_size number
+---@field tooltip_gap number
+
+---@class NotificationSettings
+---@field position string
+---@field width number
+---@field icon_size number
+---@field padding number
+---@field spacing number
+---@field accent_width number
+---@field timeouts table<string, number>
 
 ---@class WorkspaceDefinition
 ---@field name string

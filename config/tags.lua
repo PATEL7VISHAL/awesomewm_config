@@ -23,7 +23,7 @@ return {
         type = "social",
         icon = icons.social,
         default_app = apps.default.social,
-        layout = awful.layout.suit.tile,
+        layout = awful.layout.suit.max,
     },
     {
         name = "music",

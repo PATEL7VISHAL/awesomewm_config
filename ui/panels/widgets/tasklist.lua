@@ -4,6 +4,7 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 
 local config = require("config.tasklist")
+local tooltip = require("ui.tooltip")
 
 local M = {}
 
@@ -97,12 +98,16 @@ end
 function M.new(s, opts)
 	-- One tooltip for all tasks; per-task tooltips each create a wibox.
 	local shared_tooltip_target
-	local shared_tooltip = awful.tooltip({
+	local shared_tooltip = tooltip.new({
 		mode = "outside",
 		preferred_positions = opts and opts.position == "bottom" and { "top" } or { "bottom" },
 		timer_function = function()
 			local task_client = shared_tooltip_target and shared_tooltip_target._task_client
-			return task_client and task_client.valid and (task_client.name or task_client.class or "Window") or ""
+			if not (task_client and task_client.valid) then
+				return ""
+			end
+
+			return tooltip.escape(task_client.name or task_client.class or "Window")
 		end,
 	})
 

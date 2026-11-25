@@ -4,6 +4,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 local panel_config = require("config.panel")
 local widgets = require("ui.panels.widgets")
+local tooltip = require("ui.tooltip")
 
 local M = {}
 
@@ -27,6 +28,12 @@ local function create_panel(s, opts, launcher)
 						spacing = opts.spacing,
 						style = opts.workspace_style,
 					}),
+					{
+						forced_width = 1,
+						color = beautiful.panel_separator,
+						widget = wibox.widget.separator,
+					},
+					widgets.layoutbox(s, { maring = opts.margin, spacing = opts.spacing }),
 					{
 						{
 							forced_width = 1,
@@ -56,7 +63,6 @@ local function create_panel(s, opts, launcher)
 					widgets.battery.new(),
 					awful.widget.keyboardlayout(),
 					widgets.systray.new(),
-					widgets.layoutbox(s),
 					widgets.power_menu.new(s, opts),
 					spacing = opts.spacing * 2,
 					layout = wibox.layout.fixed.horizontal,
@@ -82,6 +88,8 @@ function M.setup(opts)
 	if not preset then
 		error("Unknown panel style '" .. tostring(style) .. "'")
 	end
+
+	tooltip.set_panel_position(preset.position)
 
 	screen.connect_signal("request::desktop_decoration", function(s)
 		require("ui.tags").create_for_screen(s)

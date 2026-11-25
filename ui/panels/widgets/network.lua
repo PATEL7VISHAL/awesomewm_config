@@ -5,6 +5,7 @@ local wibox = require("wibox")
 
 local config = require("config.network")
 local network = require("core.network")
+local tooltip = require("ui.tooltip")
 local drawing = require("ui.panels.widgets.lib.drawing")
 
 local M = {}
@@ -216,22 +217,15 @@ local function create(panel_height)
 	update(network.get_state())
 
 	if (config.tooltip or {}).enabled then
-		awful.tooltip({
+		tooltip.new({
 			objects = { widget },
-
 			timer_function = function()
-				return table.concat({
-					"Network",
-					"",
-					"Interface: " .. (current_interface or "Disconnected"),
-					"Download: " .. format_speed(current_download),
-					"Upload: " .. format_speed(current_upload),
-				}, "\n")
+				return tooltip.format("Network", {
+					{ "Interface", current_interface or "Disconnected" },
+					{ "Download", format_speed(current_download) },
+					{ "Upload", format_speed(current_upload) },
+				})
 			end,
-
-			preferred_positions = { "top", "bottom" },
-			margin_leftright = apply_dpi(8),
-			margin_topbottom = apply_dpi(6),
 		})
 	end
 

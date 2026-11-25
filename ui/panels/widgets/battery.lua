@@ -1,10 +1,10 @@
-local awful = require("awful")
 local wibox = require("wibox")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local dpi = require("beautiful.xresources").apply_dpi
 
 local battery = require("core.battery")
+local tooltip = require("ui.tooltip")
 
 local M = {}
 
@@ -101,28 +101,26 @@ local function create()
 
 	local function update_tooltip()
 		if not current_state then
-			return "Battery information unavailable"
+			return tooltip.format("Battery", { "Information unavailable" })
 		end
 
-		local lines = {
-			string.format("Battery: %d%%", current_state.percentage),
-			"Status: " .. current_state.status,
-			"Connected batteries: " .. current_state.battery_count,
+		local rows = {
+			{ "Level", string.format("%d%%", current_state.percentage) },
+			{ "Status", current_state.status },
+			{ "Batteries", tostring(current_state.battery_count) },
 		}
 
 		for index, item in ipairs(current_state.batteries) do
-			lines[#lines + 1] = string.format("Battery %d: %d%% (%s)", index, item.capacity, item.status or "Unknown")
+			rows[#rows + 1] =
+				{ tostring(index), string.format("%d%% (%s)", item.capacity, item.status or "Unknown") }
 		end
 
-		return table.concat(lines, "\n")
+		return tooltip.format("Battery", rows)
 	end
 
-	awful.tooltip({
+	tooltip.new({
 		objects = { widget },
 		timer_function = update_tooltip,
-		preferred_positions = { "top", "bottom" },
-		margin_leftright = 8,
-		margin_topbottom = 6,
 	})
 
 	awesome.connect_signal("battery::update", update)

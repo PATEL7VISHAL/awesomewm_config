@@ -8,4 +8,9 @@ return {
     client_corner_radius = dpi(10),
     dialog_max_width_ratio = 0.9,
     dialog_max_height_ratio = 0.9,
+    popup_corner_radius = dpi(8),
+    tooltip_margin_leftright = dpi(12),
+    tooltip_margin_topbottom = dpi(8),
+    tooltip_tail_size = dpi(6),
+    tooltip_gap = dpi(3),
 }
