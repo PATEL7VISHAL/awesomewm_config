@@ -8,6 +8,16 @@ local tooltip = require("ui.tooltip")
 
 local M = {}
 
+local function with_vertical_spacing(widget, spacing)
+	return wibox.container.margin(
+		widget,
+		0, -- left
+		0, -- right
+		spacing, -- top
+		spacing -- bottom
+	)
+end
+
 local function create_panel(s, opts, launcher)
 	local panel = awful.wibar({
 		screen = s,
@@ -28,11 +38,11 @@ local function create_panel(s, opts, launcher)
 						spacing = opts.spacing,
 						style = opts.workspace_style,
 					}),
-					{
+					with_vertical_spacing({
 						forced_width = 1,
 						color = beautiful.panel_separator,
 						widget = wibox.widget.separator,
-					},
+					}, 6),
 					widgets.layoutbox(s, { maring = opts.margin, spacing = opts.spacing }),
 					{
 						{
@@ -57,9 +67,9 @@ local function create_panel(s, opts, launcher)
 					layout = wibox.layout.fixed.horizontal,
 				},
 				{
-					widgets.cpu.new(),
-					widgets.network.new(),
-					widgets.ram.new(),
+					with_vertical_spacing(widgets.cpu.new(), 1),
+					with_vertical_spacing(widgets.network.new(), 1),
+					with_vertical_spacing(widgets.ram.new(), 1),
 					widgets.battery.new(),
 					awful.widget.keyboardlayout(),
 					widgets.systray.new(),
